@@ -14,7 +14,13 @@ class Menu extends Model
     protected $fillable = [
         'nama_menu',
         'kategori',
-        'harga'
+        'harga',
+        'foto'
     ];
+
+    public function ulasan_menu()
+{
+    return $this->hasMany(\App\Models\UlasanMenu::class, 'menu_id');
+}
 
 }

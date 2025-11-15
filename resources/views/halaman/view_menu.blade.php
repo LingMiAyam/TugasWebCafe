@@ -1,54 +1,59 @@
 @extends('layout.app')
 
-@section('title', 'Manajemen Menu')
+@section('title', 'Daftar Menu')
 
 @section('content')
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-amber-900">Daftar Menu</h2>
+        <a href="{{ route('menu.tambah') }}" 
+           class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+            + Tambah Menu
+        </a>
+    </div>
 
-    {{-- Tombol Tambah --}}
-    <a href="/menu/tambah" 
-       class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mb-6 inline-block shadow-md transition-all">
-        + Tambah Menu Baru
-    </a>
+    {{-- Alert sukses / error --}}
+    @if(session('sukses'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {{ session('sukses') }}
+        </div>
+    @endif
 
-    {{-- Tabel --}}
-    <div class="bg-white shadow-xl rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-amber-700 text-white">
+    @if(session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    {{-- Tabel daftar menu --}}
+    <table class="w-full border-collapse">
+        <thead>
+            <tr class="bg-stone-200">
+                <th class="px-4 py-2 text-left">Nama Menu</th>
+                <th class="px-4 py-2">Kategori</th>
+                <th class="px-4 py-2">Harga</th>
+                <th class="px-4 py-2">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($menus as $menu)
                 <tr>
-                    <th class="py-3 px-6 text-left">No</th>
-                    <th class="py-3 px-6 text-left">Nama Menu</th>
-                    <th class="py-3 px-6 text-left">Kategori</th>
-                    <th class="py-3 px-6 text-left">Harga</th>
-                    <th class="py-3 px-6 text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @foreach ($data_menu as $menu)
-                <tr class="hover:bg-stone-50">
-                    <td class="py-4 px-6">{{ $loop->iteration }}</td>
-                    <td class="py-4 px-6 font-medium">{{ $menu->nama_menu }}</td>
-                    <td class="py-4 px-6">{{ $menu->kategori }}</td>
-                    <td class="py-4 px-6">Rp {{ number_format($menu->harga, 0, ',', '.') }}</td>
-                    <td class="py-4 px-6 text-center">
-                        <a href="/menu/edit/{{ $menu->id }}" 
-                           class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-sm shadow transition-all">
-                           Edit
-                        </a>
-                        <a href="/menu/hapus/{{ $menu->id }}" 
-                           class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm shadow transition-all ml-2"
-                           onclick="return confirm('Yakin mau hapus menu {{ $menu->nama_menu }}?')">
-                           Hapus
-                        </a>
+                    <td class="px-4 py-2">{{ $menu->nama_menu }}</td>
+                    <td class="px-4 py-2">{{ $menu->kategori }}</td>
+                    <td class="px-4 py-2">Rp {{ number_format($menu->harga,0,',','.') }}</td>
+                    <td class="px-4 py-2">
+                        <a href="{{ route('menu.edit', $menu->id) }}" 
+                           class="text-blue-600 hover:underline">Edit</a>
+                        <a href="{{ route('menu.hapus', $menu->id) }}" 
+                           class="text-red-600 hover:underline ml-2">Hapus</a>
                     </td>
                 </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-
-    {{-- Pagination (Tailwind) --}}
-    <div class="mt-6">
-        {{ $data_menu->links() }}
-    </div>
-
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center text-stone-500 py-4">
+                        Belum ada menu ditambahkan.
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 @endsection
