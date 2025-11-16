@@ -66,13 +66,10 @@
                         </button>
                     </form>
 
-                    <form action="{{ route('cart.checkout') }}" method="POST">
-                        @csrf
-                        <button type="submit"
-                            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition font-bold">
-                            Checkout
-                        </button>
-                    </form>
+                    <a href="{{ route('cart.checkout') }}"
+                        class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition font-bold inline-block">
+                        Checkout
+                    </a>
                 </div>
             </div>
         @endif

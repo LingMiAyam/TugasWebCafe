@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Menu;
+use App\Models\Order;
 
 class CartController extends Controller
 {
@@ -81,8 +82,41 @@ class CartController extends Controller
     if (empty($cart)) {
         return redirect()->route('cart.index')->with('error', 'Keranjang masih kosong!');
     }
-    session()->forget('cart');
 
-    return view('halaman.view_checkout_success');
+    return view('halaman.view_checkout_form', compact('cart'));
+    }
+
+    public function processCheckout(Request $request)
+    {
+        $request->validate([
+            'nomor_meja' => 'required|integer|min:1|max:999',
+        ]);
+
+        $cart = session()->get('cart', []);
+
+        if (empty($cart)) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang kosong!');
+        }
+
+        // Hitung total
+        $total = 0;
+        foreach ($cart as $item) {
+            $total += $item['harga'] * $item['qty'];
+        }
+
+        // Simpan order ke database
+        Order::create([
+            'nomor_meja' => $request->nomor_meja,
+            'items' => $cart,
+            'total_harga' => $total,
+            'status' => 'pending',
+        ]);
+
+        session()->forget('cart');
+
+        return view('halaman.view_checkout_success', [
+            'nomor_meja' => $request->nomor_meja,
+            'total' => $total,
+        ]);
     }
 }
